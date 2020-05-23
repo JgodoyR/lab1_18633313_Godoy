@@ -1,16 +1,6 @@
 #lang racket
 
-
-#|-----------------------TDA Git-----------------------|#
-;Funcion que mediante currificacion permite aplicar comandos a otras funciones, dejando un registro de cada comando aplicado.
-;En este caso los comandos que se podran utilizar seran seis: Pull, Add, Commit, Push, Status y Log
-;Dominio: string (que representara los comandos de la funcion)
-;Recorrido: Funcion (funcion en la cual se aplicara el dominio)
-
-
-
-
-
+#|----------------------TDA zonas----------------------|#
 ;Representacion Zonas: Lista de listas
 ;Zonas de trabajo
 ;Zona 1: WorkSpace
@@ -31,11 +21,30 @@
                               #f))
 
 
+
+#|-----------------------TDA Git-----------------------|#
+;Funcion que mediante currificacion permite aplicar comandos a otras funciones, dejando un registro de cada comando aplicado.
+;En este caso los comandos que se podran utilizar seran seis: Pull, Add, Commit, Push, Status y Log
+;Dominio: string (que representara los comandos de la funcion)
+;Recorrido: Funcion (funcion en la cual se aplicara el dominio)
+
+
+
+
 #|-----------------------TDA pull----------------------|#
 ;Funcion que retorna una lista con los cambios realizados desde el RemoteRepository al LocalRepository
-;Dominio: String (en este caso para las zonas de trabajo)
+;Dominio: Lista x Lista
 ;Recorrido: Lista
-;Tipo de Recursion:
+;Tipo de Recursion: Lineal/Natural
+
+;Constructor
+
+(define (pull RemoteRepository LocalRepository)
+  (if (null? RemoteRepository)
+      LocalRepository
+      (cons (car RemoteRepository)(pull (cdr RemoteRepository) LocalRepository))))
+
+       
 
 #|-----------------------TDA add-----------------------|#
 ;Funcion que añade los cambios locales registrados en el Workspace al Index
