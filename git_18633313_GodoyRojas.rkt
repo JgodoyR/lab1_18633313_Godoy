@@ -1,6 +1,7 @@
 #lang racket
 
 #|----------------------TDA zonas----------------------|#
+
 ;Representacion Zonas: Lista de listas
 ;Zonas de trabajo
 ;Zona 1: WorkSpace
@@ -8,17 +9,66 @@
 ;Zona 3: Local Repository
 ;Zona 4: Remote Repository
 
+;Constructor Repositorios
+
+;Funcion que crea un repositorio como lista vacia (se usara para los 4 repositorios)
+;Dominio: Lista vacia
+;Recorrido: Lista de strings
+(define (crearRepositorio)
+  (list ""))
+
+;Pertenencia Repositorios
+
+;Funcion que comprueba que crearRepositorio sea una lista
+;Dominio: Lista
+;Recorrido: Boolean
+(define (crearRepositorio? lista)
+  (if (list? lista)
+      #t
+      #f))
+
 ;Constructor Zonas
-;Se crea la lista zonas, que contendra una lista para cada zona
-(define zonas (lambda (WorkSpace Index LocalRepository RemoteRepository)
+
+;Funcion que crea una lista de lista con todas l
+;Dominio: Lista x lista x lista x lista
+;Recorrido: Lista
+(define crearZonas (lambda (WorkSpace Index LocalRepository RemoteRepository)
                 (list (WorkSpace Index LocalRepository RemoteRepository))))
 
 ;Pertenencia Zonas
+
+;Funcion que comprueba que crearZonas sea una lista
 ;Dominio: Lista de elementos
-;Recorrido: Boleano
-(define (zonas? lista)(if (list? lista)
+;Recorrido: Boolean
+(define (crearZonas? lista)(if (list? lista)
                               #t
                               #f))
+
+;Selector Zonas
+
+;Funcion que obtiene el repositorio WorkSpace
+;Dominio: TDA Zonas
+;Recorrido: Lista
+(define (getWorkSpace crearZonas)
+  (car crearZonas))
+
+;Funcion que obtiene el repositorio Index
+;Dominio: TDA Zonas
+;Recorrido: Lista
+(define (getIndex crearZonas)
+  (cadr crearZonas))
+
+;Funcion que obtiene el repositorio LocalRepository
+;Dominio: TDA Zonas
+;Recorrido: Lista
+(define (getLocalRepository crearZonas)
+  (caddr crearZonas))
+
+;Funcion que obtiene el repositorio RemoteRepository
+;Dominio: TDA Zonas
+;Recorrido: Lista
+(define (getRemoteRepository crearZonas)
+  (cadddr crearZonas))
 
 
 
