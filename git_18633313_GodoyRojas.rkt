@@ -15,7 +15,7 @@
 ;Dominio: Lista vacia
 ;Recorrido: Lista de strings
 (define (crearRepositorio)
-  (list ""))
+  (list '()))
 
 ;Pertenencia Repositorios
 
@@ -101,6 +101,17 @@
 ;Dominio: Lista
 ;Recorrido: Lista 
 ;Tipo de Recursion:
+
+;Constructor
+
+;Funcion que inserta un elemento en una determinada posicion de la lista
+;Dominio: Lista x entero x string
+;Recorrido: Lista
+;Tipo de recursion: De Cola
+(define (insertarElemento lista pos elemento)
+  (if (= pos 0)
+      (cons elemento lista)
+      (cons (car lista) (insertarElemento (cdr lista) (- pos 1) elemento))))
 
 #|-----------------------TDA commit--------------------|#
 ;Funcion que genera un commit con los cambios almacenados en el Index, especificando un mensaje descriptivo de este cambio, para llevarlos al LocalRepository
