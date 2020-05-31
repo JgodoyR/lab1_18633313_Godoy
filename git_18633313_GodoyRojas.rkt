@@ -74,6 +74,9 @@
 
 ;-----------------------Manejo de listas---------------
 
+;Funcion que define a null como una lista vacia
+(define null (list))
+
 ;Funcion que elimina un elemento de una determinada posicion de la lista
 ;Dominio: Lista x entero
 ;Recorrido: Lista nueva con el elemento del indice "i" eliminado
@@ -107,6 +110,16 @@
 (define (agregarElemento lista elemento)
   (append lista (list elemento)))
 
+;Funcion que cambia el elemento en la posicion i de la lista
+;Dominio: Lista x Entero x Elemento (entero o string)
+;Recorrido: Lista
+;Tipo de Recursion: de Cola
+(define (cambiarElemento L i valor)(if (null? L)
+                         null
+                         (cons(if (= i 0)
+                                   valor
+                                   (car L))
+                                   (cambiarElemento (cdr L)(- i 1)valor))))
 
 #|-----------------------TDA Git-----------------------|#
 
@@ -119,12 +132,14 @@
 ;Dominio: String (que representara los comandos de la funcion)
 ;Recorrido: Funcion (funcion en la cual se aplicara el dominio)
 
-(define git (lambda (comando) (lambda (a) (comando a))))
+(define git (lambda (comando) (lambda (a) (comando a))(lambda (b) (comando b))))
 
 ;Ejemplo de uso
 
 ;> ((git pull) (zonas '() '() '() '("lab1.rkt" "lab2.rkt")))
 ;'(("lab1.rkt" "lab2.rkt") () () ("lab1.rkt" "lab2.rkt"))
+;(((git commit) "modificacion TDA")(zonas '("lab1.rkt") '("lab2.rkt") '("lab3.rkt") '("lab4.rkt")))
+;'(("lab1.rkt") ("lab2.rkt") ("lab2.rkt" "modificacion TDA") ("lab4.rkt"))
 
 
 #|-----------------------TDA pull----------------------|#
@@ -167,35 +182,34 @@
 
 ;(define (add archivos)
 ;  (if (null? archivos)
-;      null
-;      (if (
+;      (list (getWorkSpace) (getIndex) (getLocalRepository) (getRemoteRepository))
+;      (if (null? (getWorkSpace zonas))
+;          zonas
+;          (actualizarLista archivos 1 (getWorkSpace zonas)))))
 
 
 #|-----------------------TDA commit--------------------|#
 
-;Representacion
+;Representacion: Lista de listas
+
+;Constructor
 
 ;Funcion que genera un commit con los cambios almacenados en el Index, especificando un mensaje descriptivo de este cambio, para llevarlos al LocalRepository
-;Dominio: String
+;Dominio: String x Listas de listas
 ;Recorrido: Lista de listas
-           
-;Constructor
-           
-;(define (commit mensaje)
-;  (if (null? zonas)
-;      (list (getWorkSpace) (getIndex) (getLocalRepository) (getRemoteRepository))
-;      (if (null? (getIndex))
-;          (cons mensaje (getIndex))
-;          (list (getWorkSpace) (getIndex) (cons "mi commit" (getLocalRepository)) (getRemoteRepository)))))
+                  
+(define commit (lambda (mensaje) (lambda (zonas)
+                                   (if (string? mensaje)
+                                       (eliminarElemento (insertarElemento zonas 2 (agregarElemento (getIndex zonas) mensaje)) 3)
+                                       "El mensaje no es un string, por tanto no es valido")
+                                        )))
 
-;(define (commit mensaje)
-;  (pull zonas)
-;      (if (null? zonas)
-;          (list (getWorkSpace) (getIndex) (getLocalRepository) (getRemoteRepository))
-;          (if (null? (getIndex))
-;              (cons mensaje (getIndex))
-;              (list (getWorkSpace) (getIndex) (cons "mi commit" (getLocalRepository)) (getRemoteRepository)))))
-  
+;> ((commit "modificacion 1")(zonas '() '() '() '()))
+;'(() () ("modificacion 1") ())
+;> ((commit "modificacion 2")(zonas '("lab1.rkt") '("lab2.rkt") '() '()))
+;'(("lab1.rkt") ("lab2.rkt") ("lab2.rkt" "modificacion 2") ())
+;> ((commit "modificacion 2")(zonas  '("lab1.rkt") '("lab2.rkt") '("lab3.rkt") '("lab4.rkt")))
+;'(("lab1.rkt") ("lab2.rkt") ("lab2.rkt" "modificacion 2") ("lab4.rkt"))
 
            
 #|-----------------------TDA push----------------------|#
@@ -208,6 +222,7 @@
 ;Dominio: Lista de listas
 ;Recorrido: Lista de listas
 
+       
 #|------------------TDA zonas->String------------------|#
 
 ;Representacion:
