@@ -76,30 +76,30 @@
 
 ;Funcion que elimina un elemento de una determinada posicion de la lista
 ;Dominio: Lista x entero
-;Recorrido: Lista nueva con el elemento de la posicion "pos" eliminado
+;Recorrido: Lista nueva con el elemento del indice "i" eliminado
 ;Tipo de recursion: Lineal/Natural
-(define (eliminarElemento lista pos)
-  (if (= pos 0)
+(define (eliminarElemento lista i)
+  (if (= i 0)
       (cdr lista)
-      (cons (car lista) (eliminarElemento (cdr lista) (- pos 1)))))
+      (cons (car lista) (eliminarElemento (cdr lista) (- i 1)))))
 
 ;Funcion que inserta un elemento en una determinada posicion de la lista
 ;Dominio: Lista x entero x string
 ;Recorrido: Lista con el elemento agregado en la posicion de la lista indicada
 ;Tipo de recursion: Lineal/Natural
-(define (insertarElemento lista pos elemento)
-      (if (= pos 0)
+(define (insertarElemento lista i elemento)
+      (if (= i 0)
           (cons elemento lista)
-          (cons (car lista) (insertarElemento (cdr lista) (- pos 1) elemento))))
+          (cons (car lista) (insertarElemento (cdr lista) (- i 1) elemento))))
 
 ;Funcion que agrega un elemento a la lista (repositorio) en una posicion dada de este, y almacena los cambios del repositorio
 ;Dominio: Lista x entero x string
 ;Recorrido: Lista actualizada con el elemento agregado en la posicion indicada
 ;Tipo de recursion: Lineal/Natural
-(define (actualizarLista lista pos elemento)
-  (if (= pos 0)
+(define (actualizarLista lista i elemento)
+  (if (= i 0)
       (cons elemento (cdr lista))
-      (cons (car lista) (actualizarLista (cdr lista) (- pos 1) elemento))))
+      (cons (car lista) (actualizarLista (cdr lista) (- i 1) elemento))))
 
 ;Funcion que agrega un elemento al final de la lista
 ;Dominio: Lista x elemento
@@ -110,52 +110,65 @@
 
 #|-----------------------TDA Git-----------------------|#
 
-;Representacion
+;Representacion: Funcion currificada
+
+;Constructor
 
 ;Funcion que mediante currificacion permite aplicar comandos a otras funciones, dejando un registro de cada comando aplicado.
 ;En este caso los comandos que se podran utilizar seran seis: Pull, Add, Commit, Push, Status y Log
-;Dominio: string (que representara los comandos de la funcion)
+;Dominio: String (que representara los comandos de la funcion)
 ;Recorrido: Funcion (funcion en la cual se aplicara el dominio)
 
+(define git (lambda (comando) (lambda (a) (comando a))))
+
+;Ejemplo de uso
+
+;> ((git pull) (zonas '() '() '() '("lab1.rkt" "lab2.rkt")))
+;'(("lab1.rkt" "lab2.rkt") () () ("lab1.rkt" "lab2.rkt"))
 
 
 #|-----------------------TDA pull----------------------|#
 
-;Representacion
-
-;Funcion que retorna una lista con los cambios realizados desde el RemoteRepository al WorkSpace
-;Dominio: Lista x Lista
-;Recorrido: Lista
-;Tipo de Recursion: 
+;Representacion: Lista de listas
 
 ;Constructor
 
+;Funcion que retorna una lista con los cambios realizados desde el RemoteRepository al WorkSpace
+;Dominio: Lista de listas
+;Recorrido: Lista de listas con el contenido del RemoteRepository copiado al WorkSpace (nueva lista zonas)
+;Tipo de Recursion: Lineal/Natural
 (define (pull zonas)
   (if (null? zonas)
       (list (getWorkSpace) (getIndex) (getLocalRepository) (getRemoteRepository))
       (if (null? (getRemoteRepository zonas))
           zonas
           (actualizarLista zonas 0 (getRemoteRepository zonas)))))
-      
-      
-;(define (pull RemoteRepository LocalRepository)
-;  (if (null? RemoteRepository)
-;      LocalRepository
-;      (cons (car RemoteRepository)(pull (cdr RemoteRepository) LocalRepository))))
 
-       
+;Ejemplo de uso
 
+;>(pull (zonas '("lab1.rkt") '() '() '()))
+;'(("lab1.rkt") () () ())
+;> (pull (zonas '() '() '() '("lab1.rkt")))
+;'(("lab1.rkt") () () ("lab1.rkt"))
+;> (pull (zonas '("lab1.rkt") '("lab2.rkt") '("lab3.rkt") '("lab4.rkt")))
+;'(("lab4.rkt") ("lab2.rkt") ("lab3.rkt") ("lab4.rkt"))
+
+     
 #|-----------------------TDA add-----------------------|#
 
-;Representacion
+;Representacion: Lista de listas
 
 ;Funcion que añade los cambios locales registrados en el Workspace al Index
-;Dominio: Lista
-;Recorrido: Lista 
-;Tipo de Recursion:
+;Dominio: Lista de listas
+;Recorrido: Lista de listas
+;Tipo de Recursion: de cola
 
 ;Constructor
 
+;(define (add archivos)
+;  (if (null? archivos)
+;      null
+;      (if (
 
 
 #|-----------------------TDA commit--------------------|#
@@ -163,20 +176,43 @@
 ;Representacion
 
 ;Funcion que genera un commit con los cambios almacenados en el Index, especificando un mensaje descriptivo de este cambio, para llevarlos al LocalRepository
-;Dominio: String x Lista
-;Recorrido: Lista
+;Dominio: String
+;Recorrido: Lista de listas
+           
+;Constructor
+           
+;(define (commit mensaje)
+;  (if (null? zonas)
+;      (list (getWorkSpace) (getIndex) (getLocalRepository) (getRemoteRepository))
+;      (if (null? (getIndex))
+;          (cons mensaje (getIndex))
+;          (list (getWorkSpace) (getIndex) (cons "mi commit" (getLocalRepository)) (getRemoteRepository)))))
 
+;(define (commit mensaje)
+;  (pull zonas)
+;      (if (null? zonas)
+;          (list (getWorkSpace) (getIndex) (getLocalRepository) (getRemoteRepository))
+;          (if (null? (getIndex))
+;              (cons mensaje (getIndex))
+;              (list (getWorkSpace) (getIndex) (cons "mi commit" (getLocalRepository)) (getRemoteRepository)))))
+  
+
+           
 #|-----------------------TDA push----------------------|#
 
-;Representacion
+;Representacion: Lista de listas
+
+;Constructor
 
 ;Funcion que envia los commit desde el LocalRepository al RemoteRepository
-;Dominio: String (en este caso para las zonas de trabajo)
-;Recorrido: Lista
+;Dominio: Lista de listas
+;Recorrido: Lista de listas
 
 #|------------------TDA zonas->String------------------|#
 
-;Representacion
+;Representacion:
+
+;Constructor
 
 ;Funcion que recibe las zonas de trabajo y entrega una representacion de las mismas como un string posible de visualizar de forma comprensible al usuario.
 ;Dominio: String (en este caso para las zonas de trabajo) 
