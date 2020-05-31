@@ -114,12 +114,12 @@
 ;Dominio: Lista x Entero x Elemento (entero o string)
 ;Recorrido: Lista
 ;Tipo de Recursion: de Cola
-(define (cambiarElemento L i valor)(if (null? L)
+(define (cambiarElemento lista i valor)(if (null? lista)
                          null
                          (cons(if (= i 0)
                                    valor
-                                   (car L))
-                                   (cambiarElemento (cdr L)(- i 1)valor))))
+                                   (car lista))
+                                   (cambiarElemento (cdr lista)(- i 1)valor))))
 
 #|-----------------------TDA Git-----------------------|#
 
@@ -173,12 +173,14 @@
 
 ;Representacion: Lista de listas
 
+;Constructor
+
 ;Funcion que añade los cambios locales registrados en el Workspace al Index
 ;Dominio: Lista de listas
 ;Recorrido: Lista de listas
 ;Tipo de Recursion: de cola
 
-;Constructor
+
 
 ;(define (add archivos)
 ;  (if (null? archivos)
@@ -222,7 +224,21 @@
 ;Dominio: Lista de listas
 ;Recorrido: Lista de listas
 
-       
+(define (push zonas)
+  (if (null? zonas)
+      (list (getWorkSpace) (getIndex) (getLocalRepository) (getRemoteRepository))
+      (if (null? (getLocalRepository zonas))
+          zonas
+          (actualizarLista zonas 3 (getLocalRepository zonas)))))
+
+;Ejemplo de uso
+;> (push (zonas '("lab1.rkt") '("lab2.rkt") '("lab3.rkt") '("lab4.rkt")))
+;'(("lab1.rkt") ("lab2.rkt") ("lab3.rkt") ("lab3.rkt"))
+;> (push (zonas '("lab1.rkt") '("lab2.rkt") '() '("lab4.rkt")))
+;'(("lab1.rkt") ("lab2.rkt") () ("lab4.rkt"))
+;> (push (zonas '("lab1.rkt") '("lab2.rkt") '("lab3.rkt") '()))
+;'(("lab1.rkt") ("lab2.rkt") ("lab3.rkt") ("lab3.rkt"))
+
 #|------------------TDA zonas->String------------------|#
 
 ;Representacion:
