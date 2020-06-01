@@ -202,16 +202,23 @@
                   
 (define commit (lambda (mensaje) (lambda (zonas)
                                    (if (string? mensaje)
-                                       (eliminarElemento (insertarElemento zonas 2 (agregarElemento (getIndex zonas) mensaje)) 3)
+                                       (if (null? (getLocalRepository zonas))
+                                           (eliminarElemento (insertarElemento zonas 2 (agregarElemento (getIndex zonas) mensaje)) 3)                                         
+                                           (list (getWorkSpace zonas) (getIndex zonas) (agregarElemento (getLocalRepository zonas) (agregarElemento (getIndex zonas) mensaje))(getRemoteRepository zonas)))
                                        "El mensaje no es un string, por tanto no es valido")
                                         )))
+
+;ver si es nulo
 
 ;> ((commit "modificacion 1")(zonas '() '() '() '()))
 ;'(() () ("modificacion 1") ())
 ;> ((commit "modificacion 2")(zonas '("lab1.rkt") '("lab2.rkt") '() '()))
 ;'(("lab1.rkt") ("lab2.rkt") ("lab2.rkt" "modificacion 2") ())
 ;> ((commit "modificacion 2")(zonas  '("lab1.rkt") '("lab2.rkt") '("lab3.rkt") '("lab4.rkt")))
-;'(("lab1.rkt") ("lab2.rkt") ("lab2.rkt" "modificacion 2") ("lab4.rkt"))
+;'(("lab1.rkt")
+;  ("lab2.rkt")
+;  ("lab3.rkt" ("lab2.rkt" "modificacion 2"))
+;  ("lab4.rkt"))
 
            
 #|-----------------------TDA push----------------------|#
