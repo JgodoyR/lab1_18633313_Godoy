@@ -312,3 +312,31 @@
 
 ;Constructor
 
+;Funcion aux de zonas->string que recorre cada elemento de la lista zonas y lo convierte en string, y cuando llega al final de la lista (o zona de trabajo)
+;se agrega una etiqueta para señalar el repositorio y un salto de linea, y esto se hace mediante el uso del largo de la lista zonas
+;Dominio: Lista de listas (zonas) x Entero
+;Recorrido: String
+;Tipo de recursion: de Cola
+(define (zonas->stringAux zonas largo)
+  (if (null? zonas)
+      (if (= largo 4)
+          '(" | WorkSpace" "\n") ;salto de linea
+          (if (= largo 3)
+              '(" | Index" "\n")
+              (if (= largo 2)
+                  '(" | Local Repository" "\n")
+                  (if (= largo 1)
+                      '(" | Remote Repository" "\n")
+                      '("\n")))))
+      (appendCola (list (car zonas))(zonas->stringAux (cdr zonas) largo))))
+  
+;Funcion que recibe las zonas de trabajo y entrega una representacion de las mismas como un string posible de visualizar de forma comprensible al usuario.
+;Dominio: Lista de listas (zonas)
+;Recorrido: String
+;Tipo de recursion: de Cola
+(define (zonas->string zonas)
+  (if (null? zonas)
+      null
+      (appendCola (zonas->stringAux (car zonas) (length zonas))(zonas->string (cdr zonas)))))
+
+;(display (zonas->string (zonas '("lab1.rkt") '("lab2.rkt") '("lab3.rkt") '("lab4.rkt"))))
