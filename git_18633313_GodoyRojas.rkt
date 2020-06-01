@@ -1,81 +1,6 @@
 #lang racket
 
-#|----------------------TDA zonas----------------------|#
-
-;Representacion Zonas: Lista de listas
-;Zonas de trabajo
-;Zona 1: WorkSpace
-;Zona 2: Index
-;Zona 3: Local Repository
-;Zona 4: Remote Repository
-;La representacion del TDA zonas quedara de la siguiente manera: '('(WorkSpace) '(Index) '(LocalRepository) '(RemoteRepository))
-
-;Constructor Repositorios
-
-;Funcion que crea un repositorio como lista vacia (se usara para los 4 repositorios)
-;Dominio: Lista vacia
-;Recorrido: Lista de strings
-(define (crearRepositorio)
-  (list '()))
-
-;Pertenencia Repositorios
-
-;Funcion que comprueba que crearRepositorio sea una lista
-;Dominio: Lista
-;Recorrido: Boolean
-(define (crearRepositorio? lista)
-  (if (list? lista)
-      #t
-      #f))
-
-;Constructor Zonas
-
-;Funcion que crea una lista de lista con todas listas de repositorios
-;Dominio: Lista x lista x lista x lista
-;Recorrido: Lista
-(define (zonas WorkSpace Index LocalRepository RemoteRepository)
-                (list WorkSpace Index LocalRepository RemoteRepository))
-
-;Pertenencia Zonas
-
-;Funcion que comprueba que crearZonas sea una lista
-;Dominio: Lista de elementos
-;Recorrido: Boolean
-(define (zonas? lista)
-  (if (list? lista)
-       #t
-       #f))
-
-;Selector Zonas
-
-;Funcion que obtiene el repositorio WorkSpace
-;Dominio: TDA Zonas
-;Recorrido: Lista
-(define (getWorkSpace zonas)
-  (car zonas))
-
-;Funcion que obtiene el repositorio Index
-;Dominio: TDA Zonas
-;Recorrido: Lista
-(define (getIndex zonas)
-  (cadr zonas))
-
-;Funcion que obtiene el repositorio LocalRepository
-;Dominio: TDA Zonas
-;Recorrido: Lista
-(define (getLocalRepository zonas)
-  (caddr zonas))
-
-;Funcion que obtiene el repositorio RemoteRepository
-;Dominio: TDA Zonas
-;Recorrido: Lista
-(define (getRemoteRepository zonas)
-  (cadddr zonas))
-
-;-----------------------Manejo de listas---------------
-
-;Funcion que define a null como una lista vacia
-(define null (list))
+#|-----------------------Manejo de listas---------------|#
 
 ;Funcion que elimina un elemento de una determinada posicion de la lista
 ;Dominio: Lista x entero
@@ -104,22 +29,127 @@
       (cons elemento (cdr lista))
       (cons (car lista) (actualizarLista (cdr lista) (- i 1) elemento))))
 
-;Funcion que agrega un elemento al final de la lista
-;Dominio: Lista x elemento
-;Recorrido: Lista nueva con el elemento agregado al final
-(define (agregarElemento lista elemento)
-  (append lista (list elemento)))
-
-;Funcion que cambia el elemento en la posicion i de la lista
-;Dominio: Lista x Entero x Elemento (entero o string)
+;Funcion que coloca un elemento al final de una lista
+;Dominio: Lista x Lista
 ;Recorrido: Lista
-;Tipo de Recursion: de Cola
-(define (cambiarElemento lista i valor)(if (null? lista)
-                         null
-                         (cons(if (= i 0)
-                                   valor
-                                   (car lista))
-                                   (cambiarElemento (cdr lista)(- i 1)valor))))
+;Tipo de recursion: de Cola
+(define (appendCola lista elemento)
+  (if (null? lista)
+       elemento
+      (cons (car lista)(appendCola (cdr lista) elemento))))
+
+;Funcion que compara el primer elemento de L1 con todos los elementos de L2
+;Dominio: Lista x lista
+;Recorrido: Lista
+;Tipo de recursion: Lineal/Natural
+(define compararElementos (lambda (L1) (lambda (L2)
+  (if (null? L2)
+      null
+      (if (eqv? L1 (car L2))
+          (cons (car L2) ((compararElementos L1) (cdr L2)))
+          ((compararElementos L1) (cdr L2)))))))
+
+;Funcion auxiliar de compararElementos, que avanza al siguiente elemento de L1
+;Dominio: Lista x lista
+;Recorrido: Lista
+(define compararElementosAux (lambda (L1)(lambda (L2)
+  (if (null? L1)
+      null
+      (appendCola ((compararElementos (car L1)) L2)((compararElementosAux (cdr L1)) L2))))))
+
+#|----------------------TDA zonas----------------------|#
+
+;Representacion Zonas: Lista de listas
+;Zonas de trabajo
+;Zona 1: WorkSpace
+;Zona 2: Index
+;Zona 3: Local Repository
+;Zona 4: Remote Repository
+;La representacion del TDA zonas quedara de la siguiente manera: '('(WorkSpace) '(Index) '(LocalRepository) '(RemoteRepository))
+
+;Constructor Zonas
+
+;Funcion que crea una lista de lista con todas listas de repositorios
+;Dominio: Lista x lista x lista x lista
+;Recorrido: Lista
+(define (zonas WorkSpace Index LocalRepository RemoteRepository)
+                (list WorkSpace Index LocalRepository RemoteRepository))
+
+;Pertenencia Zonas
+
+;Funcion que comprueba que zonas sea una lista
+;Dominio: Elemento
+;Recorrido: Boolean
+(define (zonas? zonas)
+  (if (list? zonas)
+       #t
+       #f))
+
+;Funcion que comprueba que WorkSpace sea una lista
+;Dominio: Elemento
+;Recorrido: Boolean
+(define (WorkSpace? WorkSpace)
+  (if (list? WorkSpace)
+      #t
+      #f))
+
+;Funcion que comprueba que Index sea una lista
+;Dominio: Elemento
+;Recorrido: Boolean
+(define (Index? Index)
+  (if (list? Index)
+      #t
+      #f))
+
+;Funcion que comprueba que LocalRepository sea una lista
+;Dominio: Elemento
+;Recorrido: Boolean
+(define (LocalRepository? LocalRepository)
+  (if (list? LocalRepository)
+      #t
+      #f))
+
+;Funcion que comprueba que RemoteRepository sea una lista
+;Dominio: Elemento
+;Recorrido: Boolean
+(define (RemoteRepository? RemoteRepository)
+  (if (list? RemoteRepository)
+      #t
+      #f))
+
+;Selector Zonas
+
+;Funcion que obtiene el repositorio WorkSpace
+;Dominio: TDA Zonas
+;Recorrido: Lista
+(define (getWorkSpace zonas)
+  (if (null? zonas)
+      null
+      (car zonas)))
+
+;Funcion que obtiene el repositorio Index
+;Dominio: TDA Zonas
+;Recorrido: Lista
+(define (getIndex zonas)
+  (if (null? zonas)
+      null
+      (cadr zonas)))
+
+;Funcion que obtiene el repositorio LocalRepository
+;Dominio: TDA Zonas
+;Recorrido: Lista
+(define (getLocalRepository zonas)
+  (if (null? zonas)
+      null
+      (caddr zonas)))
+
+;Funcion que obtiene el repositorio RemoteRepository
+;Dominio: TDA Zonas
+;Recorrido: Lista
+(define (getRemoteRepository zonas)
+  (if (null? zonas)
+      null
+      (cadddr zonas)))
 
 #|-----------------------TDA Git-----------------------|#
 
@@ -140,7 +170,8 @@
 ;'(("lab1.rkt" "lab2.rkt") () () ("lab1.rkt" "lab2.rkt"))
 ;(((git commit) "modificacion TDA")(zonas '("lab1.rkt") '("lab2.rkt") '("lab3.rkt") '("lab4.rkt")))
 ;'(("lab1.rkt") ("lab2.rkt") ("lab2.rkt" "modificacion TDA") ("lab4.rkt"))
-
+;
+;
 
 #|-----------------------TDA pull----------------------|#
 
@@ -151,13 +182,15 @@
 ;Funcion que retorna una lista con los cambios realizados desde el RemoteRepository al WorkSpace
 ;Dominio: Lista de listas
 ;Recorrido: Lista de listas con el contenido del RemoteRepository copiado al WorkSpace (nueva lista zonas)
-;Tipo de Recursion: Lineal/Natural
+;Tipo de Recursion: de Cola
+
 (define (pull zonas)
   (if (null? zonas)
       (list (getWorkSpace) (getIndex) (getLocalRepository) (getRemoteRepository))
       (if (null? (getRemoteRepository zonas))
           zonas
-          (actualizarLista zonas 0 (getRemoteRepository zonas)))))
+          (list (appendCola (getRemoteRepository zonas)(getWorkSpace zonas))(getIndex zonas) (getLocalRepository zonas) (getRemoteRepository zonas)))))
+          
 
 ;Ejemplo de uso
 
@@ -178,17 +211,32 @@
 ;Funcion que añade los cambios locales registrados en el Workspace al Index
 ;Dominio: Lista de listas
 ;Recorrido: Lista de listas
-;Tipo de Recursion: de cola
+;Tipo de Recursion: Lineal
 
+(define add (lambda (archivos)(lambda (zonas)
+                                (if (archivos? archivos)
+                                    (if (null? archivos)
+                                        zonas                                    
+                                        (if (null? (getIndex zonas))                                        
+                                            (list (getWorkSpace zonas) ((compararElementosAux archivos)(getWorkSpace zonas)) (getLocalRepository zonas) (getRemoteRepository zonas))
+                                            (list (getWorkSpace zonas) (cons ((compararElementosAux archivos)(getWorkSpace zonas)) (getIndex zonas)) (getLocalRepository zonas) (getRemoteRepository zonas))))
+                                    "El tipo de dato de los archivos no es valido"))))
 
+;Pertenencia
 
-;(define (add archivos)
-;  (if (null? archivos)
-;      (list (getWorkSpace) (getIndex) (getLocalRepository) (getRemoteRepository))
-;      (if (null? (getWorkSpace zonas))
-;          zonas
-;          (actualizarLista archivos 1 (getWorkSpace zonas)))))
+;Funcion que comprueba que archivos sea una lista de elementos o una lista nula
+;Dominio: Elemento
+;Recorrido: Boolean
+(define (archivos? archivos)
+  (if (list? archivos)
+      #t
+      #f))
 
+;> ((add '("lab1.rkt"))(zonas '("no" "lab1.rkt") '("lab2.rkt") '("lab3.rkt") '("lab4.rkt")))
+;'(("no" "lab1.rkt")
+;  (("lab1.rkt") "lab2.rkt")
+;  ("lab3.rkt")
+;  ("lab4.rkt"))
 
 #|-----------------------TDA commit--------------------|#
 
@@ -199,27 +247,38 @@
 ;Funcion que genera un commit con los cambios almacenados en el Index, especificando un mensaje descriptivo de este cambio, para llevarlos al LocalRepository
 ;Dominio: String x Listas de listas
 ;Recorrido: Lista de listas
+;Tipo de recursion: de Cola
                   
 (define commit (lambda (mensaje) (lambda (zonas)
-                                   (if (string? mensaje)
+                                   (if (mensaje? mensaje)
                                        (if (null? (getLocalRepository zonas))
-                                           (eliminarElemento (insertarElemento zonas 2 (agregarElemento (getIndex zonas) mensaje)) 3)                                         
-                                           (list (getWorkSpace zonas) (getIndex zonas) (agregarElemento (getLocalRepository zonas) (agregarElemento (getIndex zonas) mensaje))(getRemoteRepository zonas)))
+                                           (eliminarElemento (insertarElemento zonas 2 (appendCola (getIndex zonas) mensaje)) 3)                                         
+                                           (list (getWorkSpace zonas) (getIndex zonas) (appendCola (getLocalRepository zonas) (appendCola (getIndex zonas) mensaje))(getRemoteRepository zonas)))
                                        "El mensaje no es un string, por tanto no es valido")
                                         )))
 
-;ver si es nulo
+;Pertenencia:
+
+;Funcion que comprueba que mensaje sea un string
+;Dominio: Elemento
+;Recorrido: Boolean
+(define (mensaje? mensaje)
+  (if (string? mensaje)
+      #t
+      #f))
 
 ;> ((commit "modificacion 1")(zonas '() '() '() '()))
 ;'(() () ("modificacion 1") ())
-;> ((commit "modificacion 2")(zonas '("lab1.rkt") '("lab2.rkt") '() '()))
-;'(("lab1.rkt") ("lab2.rkt") ("lab2.rkt" "modificacion 2") ())
 ;> ((commit "modificacion 2")(zonas  '("lab1.rkt") '("lab2.rkt") '("lab3.rkt") '("lab4.rkt")))
 ;'(("lab1.rkt")
 ;  ("lab2.rkt")
 ;  ("lab3.rkt" ("lab2.rkt" "modificacion 2"))
 ;  ("lab4.rkt"))
-
+;> ((commit "test")(zonas '("lab.rkt" "lab1.rkt") '("lab2.rkt" "lab.rkt" "lab1.rkt" "lab3.rkt") '("lab5.rkt") '("lab4.rkt")))
+;'(("lab.rkt" "lab1.rkt")
+;  ("lab2.rkt" "lab.rkt" "lab1.rkt" "lab3.rkt")
+;  ("lab5.rkt" ("lab2.rkt" "lab.rkt" "lab1.rkt" "lab3.rkt" "test"))
+;  ("lab4.rkt"))
            
 #|-----------------------TDA push----------------------|#
 
@@ -230,13 +289,14 @@
 ;Funcion que envia los commit desde el LocalRepository al RemoteRepository
 ;Dominio: Lista de listas
 ;Recorrido: Lista de listas
+;Tipo de recursion: Lineal
 
 (define (push zonas)
   (if (null? zonas)
       (list (getWorkSpace) (getIndex) (getLocalRepository) (getRemoteRepository))
       (if (null? (getLocalRepository zonas))
           zonas
-          (actualizarLista zonas 3 (getLocalRepository zonas)))))
+          (actualizarLista (actualizarLista (actualizarLista zonas 3 (getLocalRepository zonas)) 2 '()) 1 '()))))
 
 ;Ejemplo de uso
 ;> (push (zonas '("lab1.rkt") '("lab2.rkt") '("lab3.rkt") '("lab4.rkt")))
@@ -252,6 +312,3 @@
 
 ;Constructor
 
-;Funcion que recibe las zonas de trabajo y entrega una representacion de las mismas como un string posible de visualizar de forma comprensible al usuario.
-;Dominio: String (en este caso para las zonas de trabajo) 
-;Recorrido: String
