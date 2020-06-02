@@ -1,0 +1,22 @@
+Autoevaluacion Jordan Godoy Rojas
+
+Requerimientos no Funcionales:
+1. 1.0
+2. 1.0
+3. 1.0
+4. 1.0
+5. 1.0
+6. 1.0
+7. 1.0
+8. 1.0
+9. 0.5
+10. 1.0
+
+Requerimientos Funcionales:
+1. 1.0
+2. 0.75
+3. 1.0
+4. 1.0
+5. 1.0
+6. 1.0
+7. 1.0
